@@ -447,3 +447,6 @@ pyvenv.cfg
 pip-selfcheck.json
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,pycharm,pycharm+all,pycharm+iml,python,venv
+__pycache__/
+
+*.py[cod]
