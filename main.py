@@ -3,10 +3,9 @@ import importlib
 from fastapi import FastAPI
 from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.openapi.utils import get_openapi
-from fastapi.responses import HTMLResponse
-
+from fastapi.responses import JSONResponse
 # 기본 FastAPI 인스턴스
-app = FastAPI(docs_url='/api/all/docs')
+app = FastAPI(docs_url=None)
 versioned_app = {}
 
 # api/versioned 디렉토리를 탐색
@@ -14,7 +13,7 @@ folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'api', 'versio
 
 for path, dirs, files in os.walk(folder):
     depth = path[len(folder) + len(os.path.sep):].count(os.path.sep)
-    if path != folder and depth == 1 and '__init__.py' in files:
+    if path != folder and depth == 1 and 'urls.py' in files:
         _, version, api_name = path.split(os.path.sep)[-3:]
 
         _include = f"api.versioned.{version}.{api_name}"
@@ -32,7 +31,7 @@ for path, dirs, files in os.walk(folder):
         app.docs_url = None  # 기본 FastAPI 인스턴스에서는 /docs를 사용하지 않음
 
 
-@app.get("/api/{version}/docs", response_class=HTMLResponse)
+@app.get("/api/{version}/docs", response_class=JSONResponse)
 async def swagger_ui_html(version: str):
     if version in versioned_app:
         openapi_url = f"/api/{version}/openapi.json"
