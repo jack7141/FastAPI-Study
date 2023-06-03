@@ -13,7 +13,7 @@ folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'api', 'versio
 
 for path, dirs, files in os.walk(folder):
     depth = path[len(folder) + len(os.path.sep):].count(os.path.sep)
-    if path != folder and depth == 1 and 'urls.py' in files:
+    if path != folder and depth == 1 and '__init__.py' in files:
         _, version, api_name = path.split(os.path.sep)[-3:]
 
         _include = f"api.versioned.{version}.{api_name}"
