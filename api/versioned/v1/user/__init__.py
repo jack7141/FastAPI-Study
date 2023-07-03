@@ -15,7 +15,9 @@ router = APIRouter(tags=[folder_name],
 
 router.add_api_route("/", endpoint=ItemsView.get_items, methods=["GET"], summary="User 전체 검색")
 router.add_api_route("/{users}", endpoint=ItemsView.read_users, methods=["POST"], summary="User 디테일")
-# router.add_api_route("/{item_id}", endpoint=UserViewSet.update_item, methods=["PUT"], summary="User 전체 검색")
-# router.add_api_route("/{users}", endpoint=UserViewSet.get_item, methods=["GET"], summary="User 디테일")
+router.add_api_route("/{item_id}", endpoint=UserViewSet.update_item, methods=["PUT"], summary="User 업데이트")
+router.add_api_route("/{item_id}", endpoint=UserViewSet.get_item, methods=["GET"], summary="User 디테일")
+router.add_api_route("/{item_id}", endpoint=UserViewSet.delete_item, methods=["DELETE"], summary="User 삭제")
+
 
 __all__ = ["router"]
