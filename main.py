@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse
+
 # 기본 FastAPI 인스턴스
 app = FastAPI(docs_url=None)
 versioned_app = {}

@@ -449,3 +449,6 @@ pip-selfcheck.json
 # End of https://www.toptal.com/developers/gitignore/api/macos,pycharm,pycharm+all,pycharm+iml,python,venv
 __pycache__/
 *.py[cod]
+api/versioned/v1/__pycache__/
+api/versioned/v1/user/__pycache__/
+api/versioned/v2/user/__pycache__/
