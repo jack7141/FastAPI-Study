@@ -119,3 +119,68 @@ if errors:
         print(f"유효성 검사 오류: {error['loc']}: {error['msg']}")
 else:
     print("모델 인스턴스 유효성 검사 통과")
+
+
+
+from pydantic import BaseModel, root_validator
+
+class MyModel(BaseModel):
+    field1: int
+    field2: str
+
+    @root_validator
+    def validate_fields(cls, values):
+        # values는 입력된 필드들의 값들을 가지는 딕셔너리입니다.
+        field1_value = values.get('field1')
+        field2_value = values.get('field2')
+
+        # 복잡한 유효성 검사 규칙을 적용합니다.
+        if field1_value is not None and field2_value is not None:
+            if field1_value > 0 and field2_value.startswith('A'):
+                # 유효하지 않은 조건이면 ValidationError를 발생시킵니다.
+                raise ValueError("Invalid values for field1 and field2")
+
+        # 유효성 검사를 통과한 값을 반환합니다.
+        return values
+from pydantic import BaseModel, validator, root_validator
+
+
+class Person(BaseModel):
+    name: str
+    age: int
+
+    @validator('name')
+    def validate_name(cls, value):
+        if len(value) < 2:
+            raise ValueError("이름은 최소 2글자 이상이어야 합니다.")
+        value = "john"
+        return value
+
+    @validator('age')
+    def validate_age(cls, value):
+        if value < 0 or value > 150:
+            raise ValueError("나이는 0부터 150 사이여야 합니다.")
+        else:
+            value = 19
+        return value
+
+    @root_validator
+    def root_validate_fields(cls, values):
+        name = values.get('name')
+        age = values.get('age')
+
+        if name == 'John' and age < 18:
+            raise ValueError("John은 미성년자일 수 없습니다.")
+
+        return values
+
+
+# 예시 데이터
+data = {'name': 'asdfasdf', 'age': 150}
+
+# 모델 인스턴스 생성
+person = Person(**data)
+
+# 유효성 검사 통과 확인
+print(person.name)  # 출력: John
+print(person.age)  # 출력: 20
