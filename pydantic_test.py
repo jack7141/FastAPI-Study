@@ -188,7 +188,7 @@ print(person.age)  # 출력: 20
 
 from pydantic import validate_arguments, BaseModel
 
-모델 정의
+# 모델 정의
 class User(BaseModel):
     id: int
     name: str
@@ -198,7 +198,7 @@ class User(BaseModel):
 def create_user(id: int, name: str):
     return User(id=id, name=name)
 
-User 객체 생성
+# User 객체 생성
 user = create_user(id=123, name='홍길동')
 
 user = create_user(id='one-two-three', name='홍길동')
