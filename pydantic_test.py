@@ -184,3 +184,38 @@ person = Person(**data)
 # 유효성 검사 통과 확인
 print(person.name)  # 출력: John
 print(person.age)  # 출력: 20
+
+
+from pydantic import validate_arguments, BaseModel
+
+모델 정의
+class User(BaseModel):
+    id: int
+    name: str
+
+# validate_arguments를 이용한 함수 정의
+@validate_arguments
+def create_user(id: int, name: str):
+    return User(id=id, name=name)
+
+User 객체 생성
+user = create_user(id=123, name='홍길동')
+
+user = create_user(id='one-two-three', name='홍길동')
+print(user.id)    # 123 출력
+print(user.name)  # '홍길동' 출력
+
+
+
+from dataclasses import dataclass as dc
+from pydantic.dataclasses import create_pydantic_model_from_dataclass
+
+@dc
+class BaseUser:
+    id: int
+    name: str
+# 그냥 dataclass는 타입힌트만을 지원하기 때문에 유효성 검사를 위해서 사용한다.
+PydanticUser = create_pydantic_model_from_dataclass(BaseUser)
+user = PydanticUser(id=123, name='홍길동')
+print(user.id)    # 123 출력
+print(user.name)  # '홍길동' 출력
