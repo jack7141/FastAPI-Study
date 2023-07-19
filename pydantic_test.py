@@ -1,4 +1,8 @@
-# from pydantic import BaseModel
+from datetime import datetime
+from decimal import Decimal
+from typing import List, Union, Optional
+from pydantic import BaseModel, Field, validator
+import requests
 #
 # class MyModel(BaseModel):
 #     id: int
@@ -221,78 +225,261 @@
 # print(user.name)  # '홍길동' 출력
 
 
-from decimal import Decimal
-from typing import List, Union
-from pydantic import BaseModel, Field, validator
-import requests
 
+#
+#
+# test_data = {
+#     "result": {
+#         "place": {
+#             "totalCount": 2,
+#             "list": [
+#                 {
+#                     "id": "cafe123",
+#                     "menuInfo": "Espresso, Latte",
+#                     "tel": "010-1234-5678",
+#                     "thumUrls": ["http://example.com/img1.jpg", "http://example.com/img2.jpg"],
+#                     "display": "My Favorite Cafe",
+#                     "reviewCount": "100",
+#                     "placeReviewCount": "50",
+#                     "address": "123 Main St, Seoul",
+#                     "roadAddress": "123 Main St, Seoul",
+#                     "businessStatus": {
+#                         "businessHours": "09:00 - 18:00"
+#                     },
+#                     "y": "37.5665",
+#                     "x": "126.9780",
+#                     "homePage": "http://example.com",
+#                 }
+#             ]
+#         }
+#     }
+# }
+#
+#
+# class Response(BaseModel):
+#     class Config:
+#         allow_population_by_field_name = True
+#
+#
+# class APIResponse(Response):
+#     def dict(self, by_alias=True, **kwargs):
+#         return super().dict(by_alias=True, **kwargs)
+# class BusinessStatus(BaseModel):
+#     business_hours: str = Field(alias="businessHours")
+#
+# class PlaceData(BaseModel):
+#     asdfasdfasdfddd: str = Field(alias="id", repr=False)
+#     menu_info: str = Field(alias="menuInfo", repr=False)
+#     tel: str
+#     thumUrls: List[str]
+#     title: str = Field(alias="display", repr=False)
+#     review_count: str = Field(alias="reviewCount", repr=False)
+#     place_review_count: str = Field(alias="placeReviewCount", repr=False)
+#     address: str
+#     road_address: str = Field(alias="roadAddress", repr=False)
+#     business_status: BusinessStatus = Field(alias="businessStatus", repr=False)
+#     latitude: str = Field(alias="y", repr=False)
+#     longitude: str = Field(alias="x", repr=False)
+#     home_page: str = Field(alias="homePage", repr=False)
+#
+# class Place(BaseModel):
+#     total_count: int = Field(alias="totalCount")
+#     list: List[PlaceData]
+#
+# class Result(BaseModel):
+#     place: Place
+#
+# class NaverListResp(BaseModel):
+#     result: Result
+#
+# response = NaverListResp(**test_data)
+# print(response)
+# print(response.dict())
+#
+#
+# from pydantic import BaseModel, validator
+#
+# class MyModel(BaseModel):
+#     holdings: str
+#     balance: str
+#
+#     @validator("holdings", "balance")
+#     def strip_str(cls, v: str):
+#         return v.strip()
+#
+# data = MyModel(holdings=' 1000  ', balance=' 5000  ')
+# print(data)
+#
+#
+#
+#
+# """
+#  repr가 선언되어있는건 무슨역할을 하게되는거야?
+# """
+# class User(BaseModel):
+#     id: int = Field(..., description="The unique id of the user", repr=True)
+#     password: str = Field(..., description="The user's password", repr=False)
+#
+# user = User(id=123, password='secret')
+# print(repr(user))  # Output: User(id=123)
+#
+#
+# """
+# exclude가 선언된건 무슨 역할을 하게되는거야?
+# """
+# class User(BaseModel):
+#     id: int = Field(..., description="The unique id of the user")
+#     password: str = Field(..., description="The user's password", exclude=True)
+#
+# user = User(id=123, password='secret')
+# print(user.dict())  # Output: {'id': 123}
+#
+#
+# """
+# 이 예제에서 KDTProjectRetrieve 인스턴스를 생성할 때 user_id를 설정하지 않으면 user_id는 기본적으로 None으로 설정되며exclude_unset=True로
+# dict()함수를 호출하면user_id가 기본적으로 None으로 설정됩니다.
+# 및 exclude_none=True, user_id 필드는 설정되지 않았거나 None으로 설정된 경우 출력 사전에서 제외됩니다.
+# 이렇게 하면 설정되고 '없음' 이외의 값을 갖는 필드만 동적으로 포함할 수 있습니다.
+# """
+# class KDTProjectRetrieve(BaseModel):
+#     course_id: str
+#     project_id: str
+#
+#     user_id: Optional[str] = Field(None)
+#
+# # create instance
+# kdt = KDTProjectRetrieve(course_id="some_course_id", project_id="some_project_id")
+#
+# # exclude unset or null fields when exporting to dict or json
+# kdt_dict = kdt.dict(exclude_unset=True, exclude_none=True)
 
-test_data = {
-    "result": {
-        "place": {
-            "totalCount": 2,
-            "list": [
-                {
-                    "id": "cafe123",
-                    "menuInfo": "Espresso, Latte",
-                    "tel": "010-1234-5678",
-                    "thumUrls": ["http://example.com/img1.jpg", "http://example.com/img2.jpg"],
-                    "display": "My Favorite Cafe",
-                    "reviewCount": "100",
-                    "placeReviewCount": "50",
-                    "address": "123 Main St, Seoul",
-                    "roadAddress": "123 Main St, Seoul",
-                    "businessStatus": {
-                        "businessHours": "09:00 - 18:00"
-                    },
-                    "y": "37.5665",
-                    "x": "126.9780",
-                    "homePage": "http://example.com",
-                }
-            ]
-        }
-    }
-}
+from pydantic import BaseModel, validator
+class MyModel(BaseModel):
+    id: int = Field(alias="xymd")
 
-
-class Response(BaseModel):
     class Config:
         allow_population_by_field_name = True
 
+m = MyModel(**{'xymd': 1})
 
-class APIResponse(Response):
-    def dict(self, by_alias=True, **kwargs):
-        return super().dict(by_alias=True, **kwargs)
-class BusinessStatus(BaseModel):
-    business_hours: str = Field(alias="businessHours")
+class MyModel(BaseModel):
+    start_time: datetime
 
-class PlaceData(BaseModel):
-    asdfasdfasdfddd: str = Field(alias="id", repr=False)
-    menu_info: str = Field(alias="menuInfo", repr=False)
-    tel: str
-    thumUrls: List[str]
-    title: str = Field(alias="display", repr=False)
-    review_count: str = Field(alias="reviewCount", repr=False)
-    place_review_count: str = Field(alias="placeReviewCount", repr=False)
-    address: str
-    road_address: str = Field(alias="roadAddress", repr=False)
-    business_status: BusinessStatus = Field(alias="businessStatus", repr=False)
-    latitude: str = Field(alias="y", repr=False)
-    longitude: str = Field(alias="x", repr=False)
-    home_page: str = Field(alias="homePage", repr=False)
+    class Config:
+        json_encoders = {datetime: lambda dt: dt.timestamp()}
 
-class Place(BaseModel):
-    total_count: int = Field(alias="totalCount")
-    list: List[PlaceData]
+m = MyModel(start_time=datetime.now())
 
-class Result(BaseModel):
-    place: Place
+class MyModel(BaseModel):
+    id: int
 
-class NaverListResp(BaseModel):
-    result: Result
+    class Config:
+        @staticmethod
+        def alias_generator(string: str) -> str:
+            return string.upper()
 
-response = NaverListResp(**test_data)
-print(response)
-print(response.dict())
+m = MyModel(ID=1)
+
+class MyModel(BaseModel):
+    name: str
+
+    class Config:
+        anystr_strip_whitespace = True
+
+m = MyModel(name="  John Doe  ")
+
+class MyModel(BaseModel):
+    id: int
+
+    class Config:
+        extra = "allow"
+
+m = MyModel(id=1, extra_field="extra")
+# class UserModel(BaseModel):
+#     username: str
+#     email: Optional[str]
+#
+#     @validator("email")
+#     def add_email_domain(cls, v, values, **kwargs):
+#         username = values.get('username')
+#         if username:
+#             print(f"{username}@domain.com")
+#             return f"{username}@domain.com"
+#         return v
+#
+# # Now let's create a user
+# user = UserModel(username='johndoe', email='')
+#
+#
+# class KDTProjectRetrieve(BaseModel):
+#     course_id: str
+#     project_id: str
+#     user_id: Optional[str] = Field(None)
+#
+#     @validator("course_id", pre=True)
+#     def ensure_email(cls, v, values, **kwargs):
+#         username = values.get('username')
+#         if not v and username:
+#             return f"{username}@domain.com"
+#         return v
+#
+#     @validator("project_id", pre=False)
+#     def validate_email(cls, v):
+#         # 이제 이메일이 입력에서 제공되었거나 `ensure_email` 검증기에서 생성된 상태입니다
+#         if "@" not in v or v.startswith("@") or v.endswith("@"):
+#             raise ValueError("잘못된 이메일")
+#         return v
+#
+#
+# from datetime import datetime
+# from pydantic import BaseModel
+#
+# class CustomDatetime(datetime):
+#     def __str__(self):
+#         return self.strftime('%Y-%m-%d %H:%M:%S')
+#
+# class User(BaseModel):
+#     id: int
+#     name: str
+#     created_at: CustomDatetime
+#
+#     class Config:
+#         json_encoders = {
+#             CustomDatetime: str
+#         }
+#
+# user = User(id=1, name="John", created_at=CustomDatetime.now())
+# print(user.json())  # {"id": 1, "name": "John", "created_at": "2023-07-20 12:14:56"}
+from pydantic import BaseModel
+
+class MyModel(BaseModel):
+    id: int
+
+    class Config:
+        validate_assignment = True
+
+m = MyModel(id=1)
+# m.id = "not an integer"
 
 
+def to_camel(string: str) -> str:
+    return ''.join(word.capitalize() if i > 0 else word for i, word in enumerate(string.split('_')))
+
+class MyModel(BaseModel):
+    user_name: str = Field(alias='name')
+    user_id: int = Field(alias='id')
+
+    class Config:
+        alias_generator = to_camel
+        allow_population_by_field_name = True
+
+
+data = {
+    "userName": "John Doe",
+    "userId": 123,
+}
+
+model = MyModel(**data)
+
+print(model.dict(by_alias=True)) # {'name': 'John Doe', 'id': 123}
+print(model.dict(by_alias=False)) # {'user_name': 'John Doe', 'user_id': 123}
