@@ -483,3 +483,6 @@ model = MyModel(**data)
 
 print(model.dict(by_alias=True)) # {'name': 'John Doe', 'id': 123}
 print(model.dict(by_alias=False)) # {'user_name': 'John Doe', 'user_id': 123}
+
+
+
